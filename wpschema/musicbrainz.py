@@ -20,4 +20,4 @@
 schema, including Artist, Release, Recording and Track.
 """
 
-from base import Base
+from wpschema.base import Base

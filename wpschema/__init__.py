@@ -18,3 +18,5 @@
 """This module provides an easy way to import all the models defined within
 the wpschema package.
 """
+
+from wpschema.waveplot import Edit

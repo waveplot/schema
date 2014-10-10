@@ -19,4 +19,10 @@
 the wpschema package.
 """
 
-from wpschema.waveplot import Edit
+from wpschema.waveplot import Edit, Editor, Question, WavePlot, WavePlotContext
+from wpschema.musicbrainz import (
+    Area, AreaType, Artist, ArtistCredit, ArtistType, Gender, Language, Medium,
+    Recording, RecordingRedirect, Release, ReleaseRedirect, ReleaseGroup,
+    ReleaseGroupPrimaryType, ReleasePackaging, ReleaseStatus, Script, Track,
+    TrackRedirect
+)

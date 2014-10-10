@@ -24,7 +24,7 @@ from sqlalchemy import (Boolean, Column, DateTime, Enum, ForeignKey, Integer,
                         Interval, SmallInteger, String, UnicodeText)
 from sqlalchemy.dialects.postgresql import UUID, BYTEA
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import text
+from sqlalchemy.sql import text as sql_text
 
 from wpschema.base import Base
 
@@ -51,12 +51,12 @@ class Edit(Base):
     type = Column(SmallInteger, nullable=False)
 
     time = Column(DateTime, nullable=False,
-                  server_default=text("(now() at time zone 'utc')"))
+                  server_default=sql_text("(now() at time zone 'utc')"))
 
     editor_id = Column(Integer, ForeignKey('waveplot.editor.id'),
                        nullable=False)
 
-    waveplot_gid = Column(UUID, ForeignKey('waveplot.waveplot.uuid'),
+    waveplot_gid = Column(UUID(as_uuid=True), ForeignKey('waveplot.waveplot.gid'),
                           nullable=False)
 
     editor = relationship("Editor", backref='edits')
@@ -84,9 +84,9 @@ class Editor(Base):
 
     email = Column(UnicodeText, nullable=False)
 
-    key = Column(String(6), nullable=False)
+    key = Column(String(6), nullable=False, unique=True)
 
-    query_rate = Column(Integer, nullable=False, server_default=text("60"))
+    query_rate = Column(Integer, nullable=False, server_default=sql_text("60"))
 
     active = Column(Boolean, nullable=False, default=False)
 
@@ -102,7 +102,7 @@ class WavePlot(Base):
     __tablename__ = 'waveplot'
     __table_args__ = {'schema': 'waveplot'}
 
-    gid = Column(UUID, primary_key=True)
+    gid = Column(UUID(as_uuid=True), primary_key=True)
 
     duration = Column(Interval, nullable=False)
 
@@ -147,21 +147,15 @@ class WavePlotContext(Base):
 
     id = Column(Integer, primary_key=True)
 
-    waveplot_gid = Column(UUID, ForeignKey('waveplot.waveplot.gid'),
+    waveplot_gid = Column(UUID(as_uuid=True), ForeignKey('waveplot.waveplot.gid'),
                           nullable=False)
 
-    release_id = Column(Integer, ForeignKey('musicbrainz.release.id'),
-                        nullable=False)
-
-    recording_id = Column(Integer, ForeignKey('musicbrainz.recording.id'),
-                          nullable=False)
-
-    track_id = Column(Integer, ForeignKey('musicbrainz.track.id'),
-                      nullable=False)
-
-    artist_credit_id = Column(
-        Integer, ForeignKey('musicbrainz.artist_credit.id'), nullable=False
-    )
+    # Ideally, these would be foreign keys, but MB IDs can be deleted through
+    # replication.
+    release_gid = Column(UUID(as_uuid=True), nullable=False)
+    recording_gid = Column(UUID(as_uuid=True), nullable=False)
+    track_gid = Column(UUID(as_uuid=True), nullable=False)
+    artist_credit_id = Column(Integer, nullable=False)
 
     def __repr__(self):
         return '<WavePlotContext {!r}->{!r}>'.format(self.waveplot_gid,
@@ -180,7 +174,7 @@ class Question(Base):
     category = Column(SmallInteger, nullable=False)
 
     # Number of visits since "answered" date
-    views = Column(Integer, nullable=False, server_default=text("0"))
+    views = Column(Integer, nullable=False, server_default=sql_text("0"))
 
     # Optional properties
     answer = Column(UnicodeText)

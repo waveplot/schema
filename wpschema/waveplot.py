@@ -56,8 +56,9 @@ class Edit(Base):
     editor_id = Column(Integer, ForeignKey('waveplot.editor.id'),
                        nullable=False)
 
-    waveplot_gid = Column(UUID(as_uuid=True), ForeignKey('waveplot.waveplot.gid'),
-                          nullable=False)
+    waveplot_gid = Column(
+        UUID(as_uuid=True), ForeignKey('waveplot.waveplot.gid'), nullable=False
+    )
 
     editor = relationship("Editor", backref='edits')
     waveplot = relationship("WavePlot", backref="edits")
@@ -147,8 +148,9 @@ class WavePlotContext(Base):
 
     id = Column(Integer, primary_key=True)
 
-    waveplot_gid = Column(UUID(as_uuid=True), ForeignKey('waveplot.waveplot.gid'),
-                          nullable=False)
+    waveplot_gid = Column(
+        UUID(as_uuid=True), ForeignKey('waveplot.waveplot.gid'), nullable=False
+    )
 
     # Ideally, these would be foreign keys, but MB IDs can be deleted through
     # replication.
@@ -159,7 +161,7 @@ class WavePlotContext(Base):
 
     def __repr__(self):
         return '<WavePlotContext {!r}->{!r}>'.format(self.waveplot_gid,
-                                                     self.track_id)
+                                                     self.track_gid)
 
 
 class Question(Base):

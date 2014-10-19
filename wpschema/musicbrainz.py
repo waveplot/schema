@@ -23,16 +23,17 @@ schema, including Artist, Release, Recording and Track.
 import datetime
 
 from sqlalchemy import (Boolean, CHAR, Column, DateTime, ForeignKey, Integer,
-                        SmallInteger, Unicode, UnicodeText, Table)
+                        SmallInteger, Unicode, UnicodeText)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from wpschema.base import Base
 
+
 class Artist(Base):
 
     __tablename__ = 'artist'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     gid = Column(UUID(as_uuid=True), unique=True, nullable=False)
@@ -73,7 +74,7 @@ class Artist(Base):
 class ArtistType(Base):
 
     __tablename__ = 'artist_type'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     name = Column(Unicode(255), nullable=False)
@@ -90,7 +91,7 @@ class ArtistType(Base):
 class Gender(Base):
 
     __tablename__ = 'gender'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     name = Column(Unicode(255), nullable=False)
@@ -107,7 +108,7 @@ class Gender(Base):
 class Area(Base):
 
     __tablename__ = 'area'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     gid = Column(UUID(as_uuid=True), unique=True, nullable=False)
@@ -136,7 +137,7 @@ class Area(Base):
 class AreaType(Base):
 
     __tablename__ = 'area_type'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     name = Column(Unicode(255), nullable=False)
@@ -153,7 +154,7 @@ class AreaType(Base):
 class Recording(Base):
 
     __tablename__ = 'recording'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     gid = Column(UUID(as_uuid=True), unique=True, nullable=False)
@@ -190,7 +191,7 @@ class RecordingRedirect(Base):
 class ArtistCredit(Base):
 
     __tablename__ = 'artist_credit'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     name = Column(UnicodeText, nullable=False)
@@ -205,7 +206,7 @@ class ArtistCredit(Base):
 class Release(Base):
 
     __tablename__ = 'release'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     gid = Column(UUID(as_uuid=True), unique=True, nullable=False)
@@ -253,10 +254,11 @@ class ReleaseRedirect(Base):
     new_id = Column(Integer, ForeignKey('musicbrainz.release.id'))
     created = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
 
+
 class ReleasePackaging(Base):
 
     __tablename__ = 'release_packaging'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     name = Column(Unicode(255), nullable=False)
@@ -273,7 +275,7 @@ class ReleasePackaging(Base):
 class ReleaseStatus(Base):
 
     __tablename__ = 'release_status'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     name = Column(Unicode(255), nullable=False)
@@ -290,7 +292,7 @@ class ReleaseStatus(Base):
 class Language(Base):
 
     __tablename__ = 'language'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
 
@@ -308,7 +310,7 @@ class Language(Base):
 class Script(Base):
 
     __tablename__ = 'script'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
 
@@ -322,7 +324,7 @@ class Script(Base):
 class ReleaseGroup(Base):
 
     __tablename__ = 'release_group'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     gid = Column(UUID(as_uuid=True), unique=True, nullable=False)
@@ -349,7 +351,7 @@ class ReleaseGroup(Base):
 class ReleaseGroupPrimaryType(Base):
 
     __tablename__ = 'release_group_primary_type'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     name = Column(Unicode(255), nullable=False)
@@ -367,7 +369,7 @@ class ReleaseGroupPrimaryType(Base):
 class Medium(Base):
 
     __tablename__ = 'medium'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
 
@@ -383,11 +385,13 @@ class Medium(Base):
 
     track_count = Column(Integer, default=0, nullable=False)
 
+    release = relationship('Release', backref='media')
+
 
 class Track(Base):
 
     __tablename__ = 'track'
-    __table_args__ = {'schema':'musicbrainz'}
+    __table_args__ = {'schema': 'musicbrainz'}
 
     id = Column(Integer, primary_key=True)
     gid = Column(UUID(as_uuid=True), unique=True, nullable=False)
@@ -414,6 +418,7 @@ class Track(Base):
 
     artist_credit = relationship('ArtistCredit')
     recording = relationship('Recording')
+    medium = relationship('Medium')
 
 
 class TrackRedirect(Base):

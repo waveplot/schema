@@ -154,10 +154,10 @@ class WavePlotContext(Base):
 
     # Ideally, these would be foreign keys, but MB IDs can be deleted through
     # replication.
-    release_gid = Column(UUID(as_uuid=True), nullable=False)
-    recording_gid = Column(UUID(as_uuid=True), nullable=False)
-    track_gid = Column(UUID(as_uuid=True), nullable=False)
-    artist_credit_id = Column(Integer, nullable=False)
+    release_gid = Column(UUID(as_uuid=True), nullable=False, index=True)
+    recording_gid = Column(UUID(as_uuid=True), nullable=False, index=True)
+    track_gid = Column(UUID(as_uuid=True), nullable=False, index=True)
+    artist_credit_id = Column(Integer, nullable=False, index=True)
 
     def __repr__(self):
         return '<WavePlotContext {!r}->{!r}>'.format(self.waveplot_gid,
